@@ -1,0 +1,2 @@
+const salesManagement = {};
+const salesHistory = {};

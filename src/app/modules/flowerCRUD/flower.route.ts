@@ -24,6 +24,6 @@ router.put(
 
 router.delete("/delete-flower/:flowerId", FlowerControllers.deleteFlower);
 
-router.delete("/delete-all-flower", FlowerControllers.deleteAllFlower);
+router.delete("/bulkDeleteFlowerflower", FlowerControllers.bulkDeleteFlower);
 
-export const FlowerCRUDRoutes = router;
+export const FlowerCrudRoutes = router;
