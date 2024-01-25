@@ -1,4 +1,5 @@
 import { filter } from "../../utils/filter";
+import { search } from "../../utils/searchQuery";
 import { sortMinMaxQuery } from "../../utils/sortMaxMinQuery";
 import { IFlower } from "./flower.interface";
 import { Flower } from "./flower.model";
@@ -14,6 +15,9 @@ const getAllFlower = async (query: Record<string, unknown>) => {
   const startIndex = (page - 1) * limit;
 
   filteredQuery = filteredQuery.skip(startIndex).limit(limit);
+
+  // search
+  filteredQuery = search(filteredQuery, query);
 
   // Apply sorting, min, and max using sortMinMaxQuery
   filteredQuery = sortMinMaxQuery(filteredQuery, query);
