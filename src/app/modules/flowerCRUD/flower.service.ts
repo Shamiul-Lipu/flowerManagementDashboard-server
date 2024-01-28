@@ -6,6 +6,14 @@ import { Flower } from "./flower.model";
 import { Types } from "mongoose";
 
 const getAllFlower = async (query: Record<string, unknown>) => {
+  Object.keys(query).forEach(
+    (key) =>
+      (query[key] == null || query[key] === "") &&
+      key !== "sortOrder" &&
+      delete query[key]
+  );
+
+  // console.log(query);
   const queryObj = { ...query };
   let filteredQuery = filter(Flower.find(), queryObj);
 

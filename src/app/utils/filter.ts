@@ -18,7 +18,12 @@ export const filter = <T>(
 
   excludedFiedls.forEach((query) => delete queryObj[query]);
 
-  modelQuery = modelQuery.find(queryObj);
+  const caseInsensitiveQueryObj: Record<string, unknown> = {};
+  Object.keys(queryObj).forEach((key) => {
+    caseInsensitiveQueryObj[key] = new RegExp(queryObj[key] as string, "i");
+  });
+
+  modelQuery = modelQuery.find(caseInsensitiveQueryObj);
 
   return modelQuery;
 };
