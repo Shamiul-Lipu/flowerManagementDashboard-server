@@ -19,7 +19,7 @@ router.get(
 );
 
 router.get(
-  "/monthAndYearlySalesHistory",
+  "/monthAndYearlySalesHistory/:year",
   FlowerManagmentControllers.monthAndYearlySalesHistory
 );
 

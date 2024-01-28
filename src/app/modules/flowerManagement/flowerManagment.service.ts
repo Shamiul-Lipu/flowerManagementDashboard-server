@@ -142,23 +142,20 @@ const lastWeekSalesHistory = async () => {
 };
 
 const monthAndYearlySalesHistory = async (payload: Record<string, unknown>) => {
-  const inputYear = payload.year as number;
-
-  // Calculate the start and end of the specified year
-  const yearStart = new Date(inputYear, 0, 1);
-  const yearEnd = new Date(inputYear + 1, 0, 0);
-  yearEnd.setHours(23, 59, 59, 999);
+  const inputYear = payload.year as number; // Specify the desired year
 
   const result = await FlowerManagment.aggregate([
     {
       $match: {
-        saleDate: { $gte: yearStart, $lte: yearEnd },
+        saleDate: {
+          $gte: new Date(inputYear, 0, 1),
+          $lte: new Date(inputYear, 11, 31, 23, 59, 59, 999),
+        },
       },
     },
     {
       $group: {
         _id: {
-          year: { $year: "$saleDate" },
           month: { $month: "$saleDate" },
         },
         totalAmount: { $sum: "$totalAmount" },
@@ -168,56 +165,85 @@ const monthAndYearlySalesHistory = async (payload: Record<string, unknown>) => {
       },
     },
     {
+      $group: {
+        _id: null,
+        monthlyData: { $push: "$$ROOT" },
+        totalYearlyAmount: { $sum: "$totalAmount" },
+        totalYearlyQuantity: { $sum: "$totalQuantity" },
+        bestYearlySeller: { $max: "$bestSeller" },
+        bestYearlyProduct: { $max: "$bestProduct" },
+      },
+    },
+    {
       $lookup: {
         from: "users",
-        localField: "bestSeller",
+        localField: "bestYearlySeller",
         foreignField: "_id",
-        as: "bestSellerDetails",
+        as: "bestYearlySellerDetails",
       },
     },
     {
       $lookup: {
         from: "flowers",
-        localField: "bestProduct",
+        localField: "bestYearlyProduct",
         foreignField: "_id",
-        as: "bestProductDetails",
+        as: "bestYearlyProductDetails",
       },
     },
     {
       $addFields: {
-        month: "$_id.month",
+        monthNames: [
+          "",
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
       },
     },
     {
-      $addFields: {
-        monthName: {
-          $switch: {
-            branches: [
-              { case: { $eq: ["$month", 1] }, then: "January" },
-              { case: { $eq: ["$month", 2] }, then: "February" },
-              { case: { $eq: ["$month", 3] }, then: "March" },
-              { case: { $eq: ["$month", 4] }, then: "April" },
-              { case: { $eq: ["$month", 5] }, then: "May" },
-              { case: { $eq: ["$month", 6] }, then: "June" },
-              { case: { $eq: ["$month", 7] }, then: "July" },
-              { case: { $eq: ["$month", 8] }, then: "August" },
-              { case: { $eq: ["$month", 9] }, then: "September" },
-              { case: { $eq: ["$month", 10] }, then: "October" },
-              { case: { $eq: ["$month", 11] }, then: "November" },
-              { case: { $eq: ["$month", 12] }, then: "December" },
-            ],
-            default: "InvalidMonth",
+      $project: {
+        _id: 0,
+        monthlyData: {
+          $map: {
+            input: "$monthlyData",
+            as: "monthData",
+            in: {
+              month: {
+                $arrayElemAt: ["$monthNames", "$$monthData._id.month"],
+              },
+              totalAmount: "$$monthData.totalAmount",
+              totalQuantity: "$$monthData.totalQuantity",
+              bestSeller: {
+                _id: "$$monthData.bestSeller",
+                username: {
+                  $arrayElemAt: ["$bestYearlySellerDetails.username", 0],
+                },
+              },
+              bestProduct: { $arrayElemAt: ["$bestYearlyProductDetails", 0] },
+            },
           },
         },
+        totalYearlyAmount: 1,
+        totalYearlyQuantity: 1,
+        bestYearlySeller: {
+          _id: "$bestYearlySeller",
+          username: { $arrayElemAt: ["$bestYearlySellerDetails.username", 0] },
+        },
+        bestYearlyProduct: { $arrayElemAt: ["$bestYearlyProductDetails", 0] },
       },
     },
-    // Group by year and month name for the total yearly sales
     {
-      $group: {
-        _id: { year: "$_id.year", monthName: "$monthName" },
-        monthlyData: { $push: "$$ROOT" },
-        totalYearlyAmount: { $sum: "$totalAmount" },
-        totalYearlyQuantity: { $sum: "$totalQuantity" },
+      $addFields: {
+        clientInput: payload,
       },
     },
   ]);
@@ -231,64 +257,3 @@ export const FlowerManagmentServices = {
   lastWeekSalesHistory,
   monthAndYearlySalesHistory,
 };
-
-// const monthAndYearlySalesHistory = async () => {
-//   // Specify the desired year
-//   const inputYear = 2023; // Change this to the desired year
-
-//   // Calculate the start and end of the specified year
-//   const yearStart = new Date(inputYear, 0, 1);
-//   const yearEnd = new Date(inputYear + 1, 0, 0);
-//   yearEnd.setHours(23, 59, 59, 999);
-//   const result = await FlowerManagment.aggregate([
-//     {
-//       $match: {
-//         saleDate: { $gte: yearStart, $lte: yearEnd },
-//       },
-//     },
-//     {
-//       $group: {
-//         _id: {
-//           year: { $year: "$saleDate" },
-//           month: { $month: "$saleDate" },
-//         },
-//         totalAmount: { $sum: "$totalAmount" },
-//         totalQuantity: { $sum: "$quantitySold" },
-//         bestSeller: { $max: "$sellerUserId" },
-//         bestProduct: { $max: "$productId" },
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: "users",
-//         localField: "bestSeller",
-//         foreignField: "_id",
-//         as: "bestSellerDetails",
-//       },
-//     },
-//     {
-//       $lookup: {
-//         from: "flowers",
-//         localField: "bestProduct",
-//         foreignField: "_id",
-//         as: "bestProductDetails",
-//       },
-//     },
-//     {
-//       $project: {
-//         "bestSellerDetails.password": 0,
-//       },
-//     },
-//     // Group by year for the total yearly sales
-//     {
-//       $group: {
-//         _id: "$_id.year",
-//         monthlyData: { $push: "$$ROOT" },
-//         totalYearlyAmount: { $sum: "$totalAmount" },
-//         totalYearlyQuantity: { $sum: "$totalQuantity" },
-//       },
-//     },
-//   ]);
-
-//   return result;
-// };

@@ -34,7 +34,7 @@ const lastWeekSalesHistory = catchAsync(async (req, res) => {
 });
 const monthAndYearlySalesHistory = catchAsync(async (req, res) => {
   const result = await FlowerManagmentServices.monthAndYearlySalesHistory(
-    req.body
+    req.params
   );
 
   res.json({
