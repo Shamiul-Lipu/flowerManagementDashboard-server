@@ -10,6 +10,17 @@ router.post(
   validateRequest(createFlowerSaleSchema),
   FlowerManagmentControllers.salesManagement
 );
-router.get("/sales", FlowerManagmentControllers.salesHistory);
+
+router.get("/lastWeeksales", FlowerManagmentControllers.lastWeekSalesHistory);
+
+router.get(
+  "/todaysSalesHistory",
+  FlowerManagmentControllers.todaysSalesHistory
+);
+
+router.get(
+  "/monthAndYearlySalesHistory",
+  FlowerManagmentControllers.monthAndYearlySalesHistory
+);
 
 export const FlowerManagmentRoutes = router;

@@ -12,18 +12,42 @@ const salesManagement = catchAsync(async (req, res) => {
   });
 });
 
-const salesHistory = catchAsync(async (req, res) => {
-  const result = await FlowerManagmentServices.salesHistory(req.body);
+const todaysSalesHistory = catchAsync(async (req, res) => {
+  const result = await FlowerManagmentServices.todaysSalesHistory();
 
   res.json({
     sucess: true,
     statusCode: 200,
-    message: "Sales history retrieved successfully",
+    message: "Todays Sales history retrieved successfully",
+    data: result,
+  });
+});
+const lastWeekSalesHistory = catchAsync(async (req, res) => {
+  const result = await FlowerManagmentServices.lastWeekSalesHistory();
+
+  res.json({
+    sucess: true,
+    statusCode: 200,
+    message: "Last weeks Sales history retrieved successfully",
+    data: result,
+  });
+});
+const monthAndYearlySalesHistory = catchAsync(async (req, res) => {
+  const result = await FlowerManagmentServices.monthAndYearlySalesHistory(
+    req.body
+  );
+
+  res.json({
+    sucess: true,
+    statusCode: 200,
+    message: "This years Monthly Sales history retrieved successfully",
     data: result,
   });
 });
 
 export const FlowerManagmentControllers = {
   salesManagement,
-  salesHistory,
+  todaysSalesHistory,
+  lastWeekSalesHistory,
+  monthAndYearlySalesHistory,
 };
