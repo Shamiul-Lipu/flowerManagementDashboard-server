@@ -5,13 +5,15 @@ import {
 } from "./flower.validation";
 import { FlowerControllers } from "./flower.controller";
 import validateRequest from "../../middleware/validateRequest";
+import auth from "../../middleware/simpleAuth";
 
 const router = express.Router();
 
-router.get("/", FlowerControllers.getAllFlower);
+router.get("/", auth(), FlowerControllers.getAllFlower);
 
 router.post(
   "/add-flower",
+  auth(),
   validateRequest(createFlowerProductValidationSchema),
   FlowerControllers.addFlower
 );
@@ -22,8 +24,8 @@ router.put(
   FlowerControllers.updateFlower
 );
 
-router.delete("/delete-flower/:flowerId", FlowerControllers.deleteFlower);
+router.put("/delete-flower/:flowerId", FlowerControllers.deleteFlower);
 
-router.delete("/bulkDeleteFlowerflower", FlowerControllers.bulkDeleteFlower);
+router.put("/bulkDeleteFlowerflower", FlowerControllers.bulkDeleteFlower);
 
 export const FlowerCrudRoutes = router;

@@ -12,8 +12,8 @@ export const createFlowerProductValidationSchema = z.object({
   fragrance: z.string(),
   size: z.number(),
   bloomingSeason: z.string(),
-  origin: z.string(),
   rating: z.number(),
+  isSelectedForDelete: z.boolean().optional(),
 });
 
 export const updateFlowerProductValidationSchema = z.object({
@@ -28,6 +28,6 @@ export const updateFlowerProductValidationSchema = z.object({
   fragrance: z.string().optional(),
   size: z.number().optional(),
   bloomingSeason: z.string().optional(),
-  origin: z.string().optional(),
   rating: z.number().optional(),
+  isSelectedForDelete: z.boolean().optional(),
 });

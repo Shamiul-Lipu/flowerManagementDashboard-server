@@ -1,5 +1,5 @@
 import config from "../../config";
-import { createToken } from "../../utils/authUtils";
+import { createToken, verifyToken } from "../../utils/authUtils";
 import { User } from "../user/use.model";
 import { IUser } from "../user/user.interface";
 import bcrypt from "bcrypt";
@@ -58,4 +58,33 @@ const loginUser = async (payload: { username: string; password: string }) => {
   return { aggregatedUser, accessToken, refreshToken };
 };
 
-export const AuthServices = { registerUser, loginUser };
+const refreshToken = async (token: string) => {
+  // checking if the given token is valid
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
+
+  const { id } = decoded;
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    throw new Error("This user is not found !");
+  }
+
+  const jwtPayload = {
+    id: user._id,
+    role: user.role,
+    email: user.email,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  );
+
+  return {
+    accessToken,
+  };
+};
+
+export const AuthServices = { registerUser, loginUser, refreshToken };

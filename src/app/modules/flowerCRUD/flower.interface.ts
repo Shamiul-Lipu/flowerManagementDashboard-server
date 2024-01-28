@@ -10,6 +10,6 @@ export interface IFlower {
   fragrance: string;
   size: number;
   bloomingSeason: string;
-  origin: string;
   rating: number;
+  isSelectedForDelete?: boolean;
 }

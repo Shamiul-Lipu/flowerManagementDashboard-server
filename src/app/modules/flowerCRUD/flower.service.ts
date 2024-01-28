@@ -51,12 +51,19 @@ const updateFlower = async (id: string, payload: Partial<IFlower>) => {
 };
 
 const deleteFlower = async (id: string) => {
-  const result = await Flower.findByIdAndDelete(id);
+  const result = await Flower.findByIdAndUpdate(
+    id,
+    { isSelectedForDelete: true },
+    { new: true }
+  );
   return result;
 };
 
 const bulkDeleteFlower = async (arrOfFlowersId: Types.ObjectId[]) => {
-  const result = await Flower.deleteMany({ _id: { $in: arrOfFlowersId } });
+  const result = await Flower.updateMany(
+    { _id: { $in: arrOfFlowersId } },
+    { $set: { isSelectedForDelete: true } }
+  );
   return result;
 };
 

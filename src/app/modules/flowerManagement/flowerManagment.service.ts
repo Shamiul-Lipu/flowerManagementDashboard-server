@@ -12,6 +12,10 @@ const salesManagement = async (payload: IFlowerSales) => {
     throw new Error("Flower not found!");
   }
 
+  if (!selectedflower.isSelectedForDelete) {
+    throw new Error("Flower not found!");
+  }
+
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
@@ -19,6 +23,7 @@ const salesManagement = async (payload: IFlowerSales) => {
     createSale = await FlowerManagment.create([payload], { session }); //creating sales on fales management db
 
     const newQuantity = selectedflower?.quantity - payload.quantitySold; // calculating new quantity
+
     selectedflower.quantity = newQuantity;
 
     await Flower.findByIdAndUpdate(selectedflower.id, selectedflower, {
@@ -29,6 +34,10 @@ const salesManagement = async (payload: IFlowerSales) => {
 
     await session.commitTransaction();
     await session.endSession();
+
+    if (newQuantity <= 0 && selectedflower?.isSelectedForDelete !== undefined) {
+      selectedflower.isSelectedForDelete = true;
+    }
   } catch (error) {
     session.abortTransaction();
     session.endSession();
@@ -45,11 +54,28 @@ const salesHistory = async (payload: Record<string, unknown>) => {
   const result = await FlowerManagment.aggregate([
     {
       $group: {
-        _id: { [field]: "$saleDate" },
-        totalSales: { $sum: "$totalAmount" },
+        _id: { [`${payload.field}`]: `$saleDate` },
+        totalAmount: { $sum: "$totalAmount" },
+        quantitySold: { $sum: "$quantitySold" },
       },
     },
-    { $sort: { _id: 1 } },
+    {
+      $lookup: {
+        from: "sellers",
+        localField: "_id.bestSellerId",
+        foreignField: "_id",
+        as: "bestSeller",
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id.bestProductId",
+        foreignField: "_id",
+        as: "bestProduct",
+      },
+    },
+    { $sort: { [`_id.${payload.field}`]: 1 } },
   ]);
   return result;
 };

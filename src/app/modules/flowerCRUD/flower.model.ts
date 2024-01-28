@@ -17,10 +17,25 @@ const flowerSchema = new Schema<IFlower>(
       type: String,
       required: [true, "bloomingSeason is required"],
     },
-    origin: { type: String, required: [true, "origin is required"] },
     rating: { type: Number, require: [true, "rating is required"] },
+    isSelectedForDelete: { type: Boolean },
   },
   { timestamps: true }
 );
+
+flowerSchema.pre("find", function (next) {
+  this.find({ isSelectedForDelete: { $ne: true } });
+  next();
+});
+
+flowerSchema.pre("findOne", function (next) {
+  this.find({ isSelectedForDelete: { $ne: true } });
+  next();
+});
+
+flowerSchema.pre("aggregate", function (next) {
+  this.pipeline().unshift({ $match: { isSelectedForDelete: { $ne: true } } });
+  next();
+});
 
 export const Flower = model<IFlower>("Flower", flowerSchema);
