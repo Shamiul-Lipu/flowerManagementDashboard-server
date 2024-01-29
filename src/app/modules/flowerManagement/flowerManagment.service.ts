@@ -48,12 +48,28 @@ const salesManagement = async (payload: IFlowerSales) => {
 };
 
 const todaysSalesHistory = async () => {
-  // Calculate the start and end of today
+  // Function to format date in 'Asia/Dhaka' time zone
+  const formatInDhakaTimeZone = (date) =>
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Dhaka",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }).format(date);
+
+  // Calculate the start and end of today in Bangladesh time zone
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
+  todayStart.setMinutes(
+    todayStart.getMinutes() - todayStart.getTimezoneOffset()
+  ); // Adjust for local time zone
 
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
+  todayEnd.setMinutes(todayEnd.getMinutes() - todayEnd.getTimezoneOffset()); // Adjust for local time zone
 
   const result = await FlowerManagment.aggregate([
     {

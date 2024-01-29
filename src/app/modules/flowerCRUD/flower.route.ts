@@ -9,7 +9,7 @@ import auth from "../../middleware/simpleAuth";
 
 const router = express.Router();
 
-router.get("/", auth(), FlowerControllers.getAllFlower);
+router.get("/", FlowerControllers.getAllFlower);
 
 router.post(
   "/add-flower",
@@ -20,12 +20,17 @@ router.post(
 
 router.put(
   "/update-flower/:flowerId",
+  auth(),
   validateRequest(updateFlowerProductValidationSchema),
   FlowerControllers.updateFlower
 );
 
-router.put("/delete-flower/:flowerId", FlowerControllers.deleteFlower);
+router.put("/delete-flower/:flowerId", auth(), FlowerControllers.deleteFlower);
 
-router.put("/bulkDeleteFlowerflower", FlowerControllers.bulkDeleteFlower);
+router.put(
+  "/bulkDeleteFlowerflower",
+  auth(),
+  FlowerControllers.bulkDeleteFlower
+);
 
 export const FlowerCrudRoutes = router;
