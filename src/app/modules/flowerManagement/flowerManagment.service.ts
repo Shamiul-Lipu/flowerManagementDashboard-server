@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import mongoose from "mongoose";
 import { IFlowerSales } from "./flowerManagment.interface";
 import { FlowerManagment } from "./flowerManagment.model";
@@ -49,7 +51,7 @@ const salesManagement = async (payload: IFlowerSales) => {
 
 const todaysSalesHistory = async () => {
   // Function to format date in 'Asia/Dhaka' time zone
-  const formatInDhakaTimeZone = (date) =>
+  const formatInDhakaTimeZone = (date: any) =>
     new Intl.DateTimeFormat("en-US", {
       timeZone: "Asia/Dhaka",
       year: "numeric",
