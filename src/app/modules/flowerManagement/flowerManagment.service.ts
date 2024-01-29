@@ -65,11 +65,11 @@ const todaysSalesHistory = async () => {
   todayStart.setHours(0, 0, 0, 0);
   todayStart.setMinutes(
     todayStart.getMinutes() - todayStart.getTimezoneOffset()
-  ); // Adjust for local time zone
+  );
 
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999);
-  todayEnd.setMinutes(todayEnd.getMinutes() - todayEnd.getTimezoneOffset()); // Adjust for local time zone
+  todayEnd.setMinutes(todayEnd.getMinutes() - todayEnd.getTimezoneOffset());
 
   const result = await FlowerManagment.aggregate([
     {
