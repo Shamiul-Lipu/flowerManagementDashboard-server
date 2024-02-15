@@ -6,7 +6,6 @@ const flowerManagmentSchema = new Schema<IFlowerSales>(
   {
     sellerUserId: {
       type: Schema.Types.ObjectId,
-      required: [true, " Seller User Id is required"],
       ref: "User",
     },
     productId: {

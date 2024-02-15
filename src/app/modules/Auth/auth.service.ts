@@ -1,10 +1,25 @@
 import config from "../../config";
 import { createToken, verifyToken } from "../../utils/authUtils";
 import { User } from "../user/use.model";
-import { IUser } from "../user/user.interface";
+import { IUser, USER_ROLE } from "../user/user.interface";
 import bcrypt from "bcrypt";
 
-const registerUser = async (payload: IUser) => {
+const registerMember = async (payload: IUser) => {
+  if (payload.role !== USER_ROLE.member) {
+    throw new Error("User role must be member");
+  }
+  const result = await User.create(payload);
+  const aggregatedResult = await User.aggregate([
+    { $match: { username: result.username } },
+    { $project: { username: 1, email: 1, role: 1 } },
+  ]);
+  return aggregatedResult;
+};
+
+const createSalesmanOrManager = async (payload: IUser) => {
+  if (payload.role === USER_ROLE.member) {
+    throw new Error("User role must be salesman");
+  }
   const result = await User.create(payload);
   const aggregatedResult = await User.aggregate([
     { $match: { username: result.username } },
@@ -87,4 +102,9 @@ const refreshToken = async (token: string) => {
   };
 };
 
-export const AuthServices = { registerUser, loginUser, refreshToken };
+export const AuthServices = {
+  registerMember,
+  createSalesmanOrManager,
+  loginUser,
+  refreshToken,
+};

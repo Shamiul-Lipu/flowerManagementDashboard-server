@@ -2,13 +2,24 @@ import config from "../../config";
 import catchAsync from "../../utils/catchAsync";
 import { AuthServices } from "./auth.service";
 
-const registerUser = catchAsync(async (req, res) => {
-  const result = await AuthServices.registerUser(req.body);
+const registerMember = catchAsync(async (req, res) => {
+  const result = await AuthServices.registerMember(req.body);
 
   res.json({
     success: true,
     statusCode: 201,
     message: "User registered successfully",
+    data: result,
+  });
+});
+
+const createSalesmanOrManager = catchAsync(async (req, res) => {
+  const result = await AuthServices.createSalesmanOrManager(req.body);
+
+  res.json({
+    success: true,
+    statusCode: 201,
+    message: "Salesmen registered successfully",
     data: result,
   });
 });
@@ -43,4 +54,9 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
-export const AuthControllers = { registerUser, loginUser, refreshToken };
+export const AuthControllers = {
+  registerMember,
+  createSalesmanOrManager,
+  loginUser,
+  refreshToken,
+};

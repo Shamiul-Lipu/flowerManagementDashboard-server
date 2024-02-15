@@ -3,20 +3,20 @@ import catchAsync from "../utils/catchAsync";
 import config from "../config";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../modules/user/use.model";
+import { USER_ROLE } from "../modules/user/user.interface";
 
-const auth = () => {
+export type TUserRole = keyof typeof USER_ROLE;
+
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    // console.log(
-    //   "9 simpleAuth req.headers.authorization",
-    //   req.headers.authorization
-    // );
     const token = req.headers.authorization;
 
-    // Check if user sent any token or not
+    // checking if the token is missing
     if (!token) {
-      throw new Error("Unauthorized Access");
+      throw new Error("You are not authorized!");
     }
 
+    // checking if the given token is valid
     let decoded;
 
     try {
@@ -24,23 +24,36 @@ const auth = () => {
         token,
         config.jwt_access_secret as string
       ) as JwtPayload;
-    } catch (err) {
-      throw new Error("Unauthorized Access");
+    } catch (error) {
+      throw new Error("UNAUTHORIZED");
     }
 
-    const { id } = decoded;
+    const { role, id } = decoded;
 
+    // checking if the user is exist
     const user = await User.findById(id);
     // console.log(user);
 
     if (!user) {
-      throw new Error("User does not exists");
+      throw new Error("This user is not found !");
     }
 
-    req.user = decoded;
+    if (requiredRoles && !requiredRoles.includes(role)) {
+      throw new Error("UNAUTHORIZED");
+    }
 
+    req.user = decoded as JwtPayload & { role: string };
     next();
   });
 };
 
 export default auth;
+
+// const { id } = decoded;
+
+// const user = await User.findById(id);
+// // console.log(user);
+
+// if (!user) {
+//   throw new Error("User does not exists");
+// }

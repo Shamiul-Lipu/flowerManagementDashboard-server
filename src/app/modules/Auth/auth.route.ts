@@ -6,13 +6,22 @@ import {
   loginValidationSchema,
   refreshTokenValidationSchema,
 } from "./auth.validation";
+import { USER_ROLE } from "../user/user.interface";
+import auth from "../../middleware/simpleAuth";
 
 const router = express.Router();
 
 router.post(
-  "/register",
+  "/registerMember",
   validateRequest(createUserValidationSchema),
-  AuthControllers.registerUser
+  AuthControllers.registerMember
+);
+
+router.post(
+  "/create-salesmanOrManager",
+  auth(USER_ROLE.manager),
+  validateRequest(createUserValidationSchema),
+  AuthControllers.createSalesmanOrManager
 );
 
 router.post(
