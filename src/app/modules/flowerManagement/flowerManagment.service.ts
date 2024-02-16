@@ -4,9 +4,11 @@ import mongoose from "mongoose";
 import { IFlowerSales } from "./flowerManagment.interface";
 import { FlowerManagment } from "./flowerManagment.model";
 import { Flower } from "../flowerCrud/flower.model";
+import { User } from "../user/use.model";
 
 const salesManagement = async (payload: IFlowerSales) => {
   let createSale;
+  let seller;
 
   const selectedflower = await Flower.findById(payload.productId);
 
@@ -40,6 +42,26 @@ const salesManagement = async (payload: IFlowerSales) => {
 
     await session.commitTransaction();
     await session.endSession();
+
+    if (payload?.sellerUserId) {
+      seller = await User.findById(payload?.sellerUserId);
+
+      if (seller?.role === "member") {
+        if (payload?.redeemPurchesPointsUsed) {
+          payload.redeemPurchesPointsUsed = false;
+          seller.purchesPoints = 0;
+        }
+
+        seller.purchesPoints =
+          (seller?.purchesPoints as number) +
+          parseFloat((payload.totalAmount / 100).toFixed(2));
+
+        await User.findByIdAndUpdate(payload?.sellerUserId, seller, {
+          new: true,
+          runValidators: true,
+        });
+      }
+    }
   } catch (error) {
     session.abortTransaction();
     session.endSession();
@@ -269,9 +291,15 @@ const monthAndYearlySalesHistory = async (payload: Record<string, unknown>) => {
   return result;
 };
 
+const memberPurchesPoints = async (payload: Record<string, unknown>) => {
+  const { purchesPoints }: any = await User.findById(payload.id);
+  return purchesPoints;
+};
+
 export const FlowerManagmentServices = {
   salesManagement,
   todaysSalesHistory,
   lastWeekSalesHistory,
   monthAndYearlySalesHistory,
+  memberPurchesPoints,
 };

@@ -14,4 +14,6 @@ router.post(
   ManagerControllers.createCoupon
 );
 
+router.get("/get-coupon", ManagerControllers.getCoupon);
+
 export const ManagerRoutes = router;

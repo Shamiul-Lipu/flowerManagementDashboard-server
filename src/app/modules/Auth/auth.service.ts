@@ -49,6 +49,8 @@ const loginUser = async (payload: { username: string; password: string }) => {
     id: user._id,
     role: user.role,
     email: user.email,
+    username: user.username,
+    purchesPoints: user.purchesPoints,
   };
 
   const accessToken = createToken(
@@ -89,6 +91,8 @@ const refreshToken = async (token: string) => {
     id: user._id,
     role: user.role,
     email: user.email,
+    username: user.username,
+    purchesPoints: user.purchesPoints,
   };
 
   const accessToken = createToken(

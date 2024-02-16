@@ -9,4 +9,5 @@ export interface IUser {
   email: string;
   password: string;
   role: "manager" | "salesman" | "member";
+  purchesPoints?: number;
 }

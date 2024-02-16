@@ -3,7 +3,7 @@ import { FlowerManagmentServices } from "./flowerManagment.service";
 
 const salesManagement = catchAsync(async (req, res) => {
   const result = await FlowerManagmentServices.salesManagement(req.body);
-
+  // console.log(req.body);
   res.json({
     sucess: true,
     statusCode: 200,
@@ -44,10 +44,21 @@ const monthAndYearlySalesHistory = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const memberPurchesPoints = catchAsync(async (req, res) => {
+  const result = await FlowerManagmentServices.memberPurchesPoints(req.user);
+
+  res.json({
+    sucess: true,
+    statusCode: 200,
+    message: "User Purchase point retrieved successfully",
+    data: result,
+  });
+});
 
 export const FlowerManagmentControllers = {
   salesManagement,
   todaysSalesHistory,
   lastWeekSalesHistory,
   monthAndYearlySalesHistory,
+  memberPurchesPoints,
 };

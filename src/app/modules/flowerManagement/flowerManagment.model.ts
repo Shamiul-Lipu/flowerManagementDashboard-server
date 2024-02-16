@@ -23,6 +23,12 @@ const flowerManagmentSchema = new Schema<IFlowerSales>(
       type: Number,
       required: [true, "Sold Quantity is required"],
     },
+    purchesPoints: {
+      type: Number,
+    },
+    redeemPurchesPointsUsed: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );

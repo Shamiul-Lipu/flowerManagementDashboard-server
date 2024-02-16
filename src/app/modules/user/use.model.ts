@@ -24,6 +24,10 @@ const userSchema = new Schema<IUser>(
       enum: ["manager", "salesman", "member"],
       default: "member",
     },
+    purchesPoints: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

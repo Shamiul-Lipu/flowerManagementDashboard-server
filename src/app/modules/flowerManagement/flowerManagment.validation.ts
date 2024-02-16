@@ -7,4 +7,6 @@ export const createFlowerSaleSchema = z.object({
   buyer: z.string(),
   quantitySold: z.number().optional(),
   totalAmount: z.number().optional(),
+  purchesPoints: z.number().optional(),
+  redeemPurchesPointsUsed: z.boolean().optional(),
 });

@@ -9,27 +9,32 @@ const router = express.Router();
 
 router.post(
   "/create-sales",
-  auth(USER_ROLE.salesman),
   validateRequest(createFlowerSaleSchema),
   FlowerManagmentControllers.salesManagement
 );
 
 router.get(
   "/lastWeeksales",
-  auth(USER_ROLE.salesman, USER_ROLE.manager),
+  auth(USER_ROLE.salesman, USER_ROLE.manager, USER_ROLE.member),
   FlowerManagmentControllers.lastWeekSalesHistory
 );
 
 router.get(
   "/todaysSalesHistory",
-  auth(USER_ROLE.salesman, USER_ROLE.manager),
+  auth(USER_ROLE.salesman, USER_ROLE.manager, USER_ROLE.member),
   FlowerManagmentControllers.todaysSalesHistory
 );
 
 router.get(
   "/monthAndYearlySalesHistory/:year",
-  auth(USER_ROLE.salesman, USER_ROLE.manager),
+  auth(USER_ROLE.salesman, USER_ROLE.manager, USER_ROLE.member),
   FlowerManagmentControllers.monthAndYearlySalesHistory
+);
+
+router.get(
+  "/memberPurchesPoints",
+  auth(USER_ROLE.member),
+  FlowerManagmentControllers.memberPurchesPoints
 );
 
 export const FlowerManagmentRoutes = router;

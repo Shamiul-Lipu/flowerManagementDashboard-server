@@ -5,4 +5,5 @@ export const createUserValidationSchema = z.object({
   email: z.string(),
   password: z.string(),
   role: z.string().optional(),
+  purchesPoints: z.number().optional(),
 });

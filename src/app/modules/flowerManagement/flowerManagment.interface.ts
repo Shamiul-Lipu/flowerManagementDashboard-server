@@ -7,4 +7,6 @@ export interface IFlowerSales {
   saleDate: Date;
   quantitySold: number;
   totalAmount: number;
+  purchesPoints?: number;
+  redeemPurchesPointsUsed?: boolean;
 }
