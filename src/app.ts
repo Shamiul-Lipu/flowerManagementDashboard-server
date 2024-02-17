@@ -12,13 +12,13 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://flower-dashboard-management-client-new.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
 // http://localhost:5173
-// https://flower-management-client-theta.vercel.app
+// https://flower-dashboard-management-client-new.vercel.app
 // aplication routes
 app.use("/api", router);
 

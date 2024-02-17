@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { IFlowerSales } from "./flowerManagment.interface";
 import { FlowerManagment } from "./flowerManagment.model";
 import { Flower } from "../flowerCrud/flower.model";
@@ -296,10 +296,19 @@ const memberPurchesPoints = async (payload: Record<string, unknown>) => {
   return purchesPoints;
 };
 
+const getMyPurchesHistory = async (payload: Record<string, unknown>) => {
+  const result = await FlowerManagment.find({
+    sellerUserId: payload.id,
+  }).populate("productId");
+
+  return result;
+};
+
 export const FlowerManagmentServices = {
   salesManagement,
   todaysSalesHistory,
   lastWeekSalesHistory,
   monthAndYearlySalesHistory,
   memberPurchesPoints,
+  getMyPurchesHistory,
 };

@@ -37,4 +37,10 @@ router.get(
   FlowerManagmentControllers.memberPurchesPoints
 );
 
+router.get(
+  "/getMyPurchesHistory",
+  auth(USER_ROLE.member, USER_ROLE.salesman),
+  FlowerManagmentControllers.getMyPurchesHistory
+);
+
 export const FlowerManagmentRoutes = router;

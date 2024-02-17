@@ -44,6 +44,7 @@ const monthAndYearlySalesHistory = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 const memberPurchesPoints = catchAsync(async (req, res) => {
   const result = await FlowerManagmentServices.memberPurchesPoints(req.user);
 
@@ -55,10 +56,22 @@ const memberPurchesPoints = catchAsync(async (req, res) => {
   });
 });
 
+const getMyPurchesHistory = catchAsync(async (req, res) => {
+  const result = await FlowerManagmentServices.getMyPurchesHistory(req.user);
+
+  res.json({
+    sucess: true,
+    statusCode: 200,
+    message: "My purches history retrieved successfully",
+    data: result,
+  });
+});
+
 export const FlowerManagmentControllers = {
   salesManagement,
   todaysSalesHistory,
   lastWeekSalesHistory,
   monthAndYearlySalesHistory,
   memberPurchesPoints,
+  getMyPurchesHistory,
 };
